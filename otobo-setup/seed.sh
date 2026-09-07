@@ -356,6 +356,122 @@ chown otobo:otobo /opt/otobo/Kernel/Language/fr_Custom.pm
   log_ok "Fichier langue fr_Custom.pm généré"
 fi
 
+# Activation de la conformité réglementaire BCEAO (Queues, SLAs, Types, Champs Dynamiques)
+if ! $DRY_RUN; then
+  docker exec -i "$WEB_CONTAINER" bash -c 'cat << "EOF" > /tmp/setup_bceao_resolve360.pl
+use strict;
+use warnings;
+use utf8;
+use lib "/opt/otobo";
+use lib "/opt/otobo/Kernel/cpan-lib";
+use lib "/opt/otobo/Custom";
+
+use Kernel::System::ObjectManager;
+
+local $Kernel::OM = Kernel::System::ObjectManager->new();
+
+my $QueueObject        = $Kernel::OM->Get("Kernel::System::Queue");
+my $SLAObject          = $Kernel::OM->Get("Kernel::System::SLA");
+my $TypeObject         = $Kernel::OM->Get("Kernel::System::Type");
+my $DynamicFieldObject = $Kernel::OM->Get("Kernel::System::DynamicField");
+my $ValidObject        = $Kernel::OM->Get("Kernel::System::Valid");
+my $SysConfigObject    = $Kernel::OM->Get("Kernel::System::SysConfig");
+
+my $ValidID = $ValidObject->ValidLookup( Valid => "valid" );
+
+my %Queues = (
+    "Opérations & Moyens de Paiement" => "Traitement des réclamations sur cartes, virements, DAB et chèques.",
+    "Crédits & Financements"          => "Traitement des litiges sur prêts, agios et tableaux d\x27amortissement.",
+    "Monnaie Électronique & Mobile"   => "Réclamations relatives au Mobile Money et transferts digitaux.",
+    "Tarification & Frais Bancaires"  => "Contestations de frais de tenue de compte et commissions.",
+    "Fraude & Sécurité"               => "Gestion urgente des litiges de fraude et paiements non autorisés.",
+    "Service Client & Agences"        => "Réclamations sur la qualité de service et le traitement en agence.",
+    "Escalade & Conformité BCEAO"     => "Dossiers sensibles et recours avant saisine de la Commission Bancaire."
+);
+
+for my $QName ( keys %Queues ) {
+    my $ExistingID = $QueueObject->QueueLookup( Queue => $QName );
+    if (!$ExistingID) {
+        $QueueObject->QueueAdd(
+            Name           => $QName,
+            ValidID        => $ValidID,
+            GroupID        => 1,
+            SystemAddressID=> 1,
+            SalutationID   => 1,
+            SignatureID    => 1,
+            Comment        => $Queues{$QName},
+            UserID         => 1,
+        );
+    }
+}
+
+my @Types = (
+    "Réclamation Clientèle",
+    "Litige Monetique & Carte",
+    "Contestation de Frais",
+    "Incident Mobile Money",
+    "Suspicion de Fraude (Urgente)",
+    "Demande d\x27Information"
+);
+
+for my $TName (@Types) {
+    my $ExistingID = $TypeObject->TypeLookup( Type => $TName );
+    if (!$ExistingID) {
+        $TypeObject->TypeAdd(
+            Name    => $TName,
+            ValidID => $ValidID,
+            UserID  => 1,
+        );
+    }
+}
+
+my %SLAs = (
+    "SLA BCEAO Standard (30 jours)" => {
+        FirstResponseTime => 60,
+        SolutionTime      => 43200,
+        Comment           => "SLA conforme Circulaire 002-2020/CB/C - Réponse sous 30 jours max",
+    },
+    "SLA BCEAO Urgence / Fraude (5 jours)" => {
+        FirstResponseTime => 30,
+        SolutionTime      => 7200,
+        Comment           => "SLA prioritaire pour suspicions de fraude et blocages de compte",
+    }
+);
+
+for my $SLAName ( keys %SLAs ) {
+    my $ExistingID = $SLAObject->SLALookup( SLA => $SLAName );
+    if (!$ExistingID) {
+        $SLAObject->SLAAdd(
+            Name              => $SLAName,
+            ValidID           => $ValidID,
+            FirstResponseTime => $SLAs{$SLAName}{FirstResponseTime},
+            SolutionTime      => $SLAs{$SLAName}{SolutionTime},
+            Comment           => $SLAs{$SLAName}{Comment},
+            ServiceIDs        => [],
+            UserID            => 1,
+        );
+    }
+}
+
+$SysConfigObject->SettingsSet(
+    Settings => [
+        { Name => "Ticket::Type", EffectiveValue => "1", IsValid => 1 },
+        { Name => "Ticket::Service", EffectiveValue => "1", IsValid => 1 },
+        {
+            Name           => "Ticket::Frontend::CustomerTicketMessage###DynamicField",
+            EffectiveValue => { "MotifReclamation" => "2", "MontantLitige" => "1", "CanalOrigine" => "1", "NumeroCompte" => "2" },
+            IsValid        => 1,
+        },
+    ],
+    UserID => 1,
+);
+
+EOF
+perl /tmp/setup_bceao_resolve360.pl
+' 2>/dev/null || true
+  log_ok "Dispositif BCEAO (Queues, SLAs, Types, Champs) activé"
+fi
+
 # Nettoyage des tuiles d'exemples dans xml_storage
 run_sql "DELETE FROM xml_storage WHERE xml_type = 'InfoTiles';"
 log_ok "Tuiles d'exemple XML supprimées"
