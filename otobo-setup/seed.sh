@@ -260,12 +260,57 @@ else
   log_warn "Fichier $KERNEL_CONFIG_FILE introuvable — ignoré"
 fi
 
-# Correctif syntaxe fr.pm si nécessaire
+# Correctif syntaxe fr.pm et traductions Résolve360
 if ! $DRY_RUN; then
   docker exec "$WEB_CONTAINER" perl -pi -e 's/^\s*'\''Request Account'\'' => '\''Créer un compte'\'',//g' /opt/otobo/Kernel/Language/fr.pm 2>/dev/null
   docker exec "$WEB_CONTAINER" perl -pi -e 's/# \$\$STOP\$\$/    '\''Request Account'\'' => '\''Créer un compte'\'',\n    # \$\$STOP\$\$/g' /opt/otobo/Kernel/Language/fr.pm 2>/dev/null
-  log_ok "Fichier langue fr.pm vérifié et nettoyé"
+  docker exec "$WEB_CONTAINER" perl -pi -e 's/'\''Ticket Search'\'' => '\'\''/'\''Ticket Search'\'' => '\''Recherche réclamation'\''/g' /opt/otobo/Kernel/Language/fr.pm 2>/dev/null
+  docker exec "$WEB_CONTAINER" perl -pi -e 's/# \$\$STOP\$\$/    '\''Create a ticket'\'' => '\''Créer une réclamation'\'',\n    '\''Create ticket'\'' => '\''Créer une réclamation'\'',\n    '\''Your last tickets'\'' => '\''Vos dernières réclamations'\'',\n    # \$\$STOP\$\$/g' /opt/otobo/Kernel/Language/fr.pm 2>/dev/null
+  docker exec "$WEB_CONTAINER" perl -pi -e 's/Il y a %s erreur de réseau possibles./%s a détecté un problème de réseau./g' /opt/otobo/Kernel/Language/fr.pm 2>/dev/null
+  
+  # Génération du module de traduction personnalisé fr_Custom.pm
+  docker exec -i "$WEB_CONTAINER" bash -c 'cat << "EOF" > /opt/otobo/Kernel/Language/fr_Custom.pm
+package Kernel::Language::fr_Custom;
+
+use strict;
+use warnings;
+
+sub Data {
+    my $Self = shift;
+    my $Lang = $Self->{Translation};
+
+    # Overrides and custom French translations for Resolve360
+    $Lang->{"Ticket Search"}               = "Recherche réclamation";
+    $Lang->{"Ticket Search."}              = "Recherche réclamation";
+    $Lang->{"Create%sa ticket"}             = "Créer%sune réclamation";
+    $Lang->{"Create a ticket"}              = "Créer une réclamation";
+    $Lang->{"Your last tickets"}            = "Vos dernières réclamations";
+    $Lang->{"Welcome %s, to your OTOBO."}   = "Bienvenue %s sur votre espace Résolve360.";
+    $Lang->{"This service portal is available to you all day every day."} = "Votre portail de gestion des réclamations est accessible 24h/24 et 7j/7.";
+    $Lang->{"Explore >"}                    = "Découvrir Digital Factory SN >";
+    $Lang->{"Message of the day"}           = "Message du jour";
+    $Lang->{"Your external tools"}          = "Vos outils externes";
+    $Lang->{"Overview"}                     = "Aperçu";
+    $Lang->{"Network error"}                = "Erreur réseau. Veuillez réessayer.";
+    $Lang->{"OTOBO 11.1 | Service Management"} = "Résolve360 | Service Client";
+    $Lang->{"Your Tickets. Your OTOBO."}   = "Vos Réclamations. Votre Espace Résolve360.";
+    $Lang->{"OTOBO News"}                   = "Nouveautés Résolve360";
+    $Lang->{"News about OTOBO."}            = "Nouveautés à propos de Résolve360.";
+    $Lang->{"Jump to OTOBO!"}              = "Accéder à Résolve360 !";
+
+    return 1;
+}
+
+1;
+EOF
+chown otobo:otobo /opt/otobo/Kernel/Language/fr_Custom.pm
+' 2>/dev/null || true
+  log_ok "Fichier langue fr_Custom.pm généré"
 fi
+
+# Nettoyage des tuiles d'exemples dans xml_storage
+run_sql "DELETE FROM xml_storage WHERE xml_type = 'InfoTiles';"
+log_ok "Tuiles d'exemple XML supprimées"
 
 # Reconstruire la config OTOBO
 if ! $DRY_RUN; then

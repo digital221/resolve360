@@ -25,11 +25,51 @@ sub Load {
     # Security & White-labeling
     $Self->{'Secure::DisableBanner'} = 1;
 
-    # Disable OTOBO default dashboard widgets
+    # Disable OTOBO default agent dashboard widgets
     $Self->{'DashboardBackend'}->{'0200-Image'}->{'Default'} = 0;
     $Self->{'DashboardBackend'}->{'0300-IFrame'}->{'Default'} = 0;
     $Self->{'DashboardBackend'}->{'0405-News'}->{'Default'} = 0;
     $Self->{'DashboardBackend'}->{'0410-RSS'}->{'Default'} = 0;
+
+    # Customer Dashboard Branding & Custom Tiles
+    $Self->{'CustomerDashboard::Configuration::Text'} = {
+        'WelcomeText' => 'Bienvenue %s, sur votre espace Résolve360.',
+        'SubText'     => 'Votre portail de gestion des réclamations est accessible 24h/24 et 7j/7.',
+        'Name'        => 'UserFirstname',
+    };
+
+    $Self->{'CustomerDashboard::Tiles'}->{'FeaturedLink-01'} = {
+        'Config' => {
+            'BackgroundImage' => '<OTOBO_CONFIG_Frontend::WebPath>common/img/Dashboard/dashboard_bgfl.png',
+            'FooterText'      => 'Découvrir Digital Factory SN >',
+            'HeaderText'      => 'Résolve360 | Service Client',
+            'Link'            => 'https://www.digitalfactory.sn',
+            'MainText'        => 'Résolve360 vous garantit une prise en charge rapide, transparente et conforme de l\'ensemble de vos réclamations bancaires.',
+            'NewTab'          => '1',
+            'TextColor'       => '#ffffff',
+        },
+        'Order'    => '2',
+        'Template' => 'Dashboard/TileFeaturedLink',
+    };
+
+    $Self->{'CustomerDashboard::Tiles'}->{'TicketList-01'} = {
+        'Config' => {
+            'CompanyTickets' => '0',
+            'MaxTickets'     => '9',
+            'OrderBy'        => 'Down',
+            'SortBy'         => 'Age',
+            'StateType'      => '',
+            'Text'           => 'Vos dernières réclamations',
+        },
+        'Module' => 'Kernel::Output::HTML::CustomerDashboard::TileTicketList',
+        'Order'  => '3',
+    };
+
+    # Disable sample / German tiles on Customer Dashboard
+    $Self->{'CustomerDashboard::Tiles'}->{'InfoTile-01'}->{'Order'} = 0;
+    $Self->{'CustomerDashboard::Tiles'}->{'PlainText-01'}->{'Order'} = 0;
+    $Self->{'CustomerDashboard::Tiles'}->{'PlainPicture-01'}->{'Order'} = 0;
+    $Self->{'CustomerDashboard::Tiles'}->{'ToolBox-01'}->{'Order'} = 0;
 
     return 1;
 }
