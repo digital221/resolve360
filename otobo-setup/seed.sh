@@ -201,8 +201,37 @@ DELETE FROM system_data
 WHERE data_key IN (
   'OTOBONews', 'SubscribedProducts', 'Daemon::SchedulerCronTaskManager::Task::OTOBOBusinessEntitlementCheck'
 );
+
+-- Injection notifications d'événements en Français
+INSERT INTO notification_event_message (notification_id, subject, text, content_type, language)
+SELECT id, 'Nouveau ticket créé: <OTOBO_TICKET_Title>', 'Bonjour <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,\n\nUn nouveau ticket [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>] a été créé.\n\n<OTOBO_CUSTOMER_REALNAME> a écrit :\n<OTOBO_CUSTOMER_BODY[30]>\n\n<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>\n\n-- <OTOBO_CONFIG_NotificationSenderName>', 'text/plain', 'fr'
+FROM notification_event WHERE name = 'Ticket create notification' AND NOT EXISTS (SELECT 1 FROM notification_event_message WHERE notification_id = notification_event.id AND language = 'fr');
+
+INSERT INTO notification_event_message (notification_id, subject, text, content_type, language)
+SELECT id, 'Suivi sur ticket déverrouillé: <OTOBO_CUSTOMER_SUBJECT[24]>', 'Bonjour <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,\n\nLe ticket déverrouillé [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>] a reçu un suivi.\n\n<OTOBO_CUSTOMER_REALNAME> a écrit :\n<OTOBO_CUSTOMER_BODY[30]>\n\n<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>\n\n-- <OTOBO_CONFIG_NotificationSenderName>', 'text/plain', 'fr'
+FROM notification_event WHERE name = 'Ticket follow-up notification (unlocked)' AND NOT EXISTS (SELECT 1 FROM notification_event_message WHERE notification_id = notification_event.id AND language = 'fr');
+
+INSERT INTO notification_event_message (notification_id, subject, text, content_type, language)
+SELECT id, 'Suivi sur ticket verrouillé: <OTOBO_CUSTOMER_SUBJECT[24]>', 'Bonjour <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,\n\nLe ticket verrouillé [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>] a reçu un suivi.\n\n<OTOBO_CUSTOMER_REALNAME> a écrit :\n<OTOBO_CUSTOMER_BODY[30]>\n\n<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>\n\n-- <OTOBO_CONFIG_NotificationSenderName>', 'text/plain', 'fr'
+FROM notification_event WHERE name = 'Ticket follow-up notification (locked)' AND NOT EXISTS (SELECT 1 FROM notification_event_message WHERE notification_id = notification_event.id AND language = 'fr');
+
+INSERT INTO notification_event_message (notification_id, subject, text, content_type, language)
+SELECT id, 'Changement de propriétaire du ticket: <OTOBO_TICKET_Title>', 'Bonjour <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,\n\nLe propriétaire du ticket [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>] a été attribué à <OTOBO_TICKET_OWNER_UserFullname> par <OTOBO_CURRENT_UserFullname>.\n\n<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>\n\n-- <OTOBO_CONFIG_NotificationSenderName>', 'text/plain', 'fr'
+FROM notification_event WHERE name = 'Ticket owner update notification' AND NOT EXISTS (SELECT 1 FROM notification_event_message WHERE notification_id = notification_event.id AND language = 'fr');
+
+INSERT INTO notification_event_message (notification_id, subject, text, content_type, language)
+SELECT id, 'Nouvelle note sur le ticket: <OTOBO_AGENT_SUBJECT[24]>', 'Bonjour <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,\n\n<OTOBO_CURRENT_UserFullname> a écrit :\n<OTOBO_AGENT_BODY[30]>\n\n<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>\n\n-- <OTOBO_CONFIG_NotificationSenderName>', 'text/plain', 'fr'
+FROM notification_event WHERE name = 'Ticket new note notification' AND NOT EXISTS (SELECT 1 FROM notification_event_message WHERE notification_id = notification_event.id AND language = 'fr');
+
+INSERT INTO notification_event_message (notification_id, subject, text, content_type, language)
+SELECT id, 'Changement de file du ticket vers <OTOBO_TICKET_Queue>: <OTOBO_TICKET_Title>', 'Bonjour <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,\n\nLe ticket [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>] a été déplacé vers la file <OTOBO_TICKET_Queue>.\n\n<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>\n\n-- <OTOBO_CONFIG_NotificationSenderName>', 'text/plain', 'fr'
+FROM notification_event WHERE name = 'Ticket queue update notification' AND NOT EXISTS (SELECT 1 FROM notification_event_message WHERE notification_id = notification_event.id AND language = 'fr');
+
+INSERT INTO notification_event_message (notification_id, subject, text, content_type, language)
+SELECT id, 'Escalade de ticket ! <OTOBO_TICKET_Title>', 'Bonjour <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,\n\nLe ticket [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>] est en escalade !\n\nDate d\'\'escalade : <OTOBO_TICKET_EscalationDestinationDate>\nEn escalade depuis : <OTOBO_TICKET_EscalationDestinationIn>\n\n<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>\n\n-- <OTOBO_CONFIG_NotificationSenderName>', 'text/plain', 'fr'
+FROM notification_event WHERE name = 'Ticket escalation notification' AND NOT EXISTS (SELECT 1 FROM notification_event_message WHERE notification_id = notification_event.id AND language = 'fr');
 "
-log_ok "Entrées news/subscription OTOBO supprimées"
+log_ok "Notifications d'événements en Français injectées"
 
 run_sql "
 DELETE FROM data_storage WHERE ds_type = 'CustomerAccept';

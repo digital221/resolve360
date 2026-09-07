@@ -13,6 +13,8 @@ sub Load {
 
     # Core Branding
     $Self->{'ProductName'} = 'Résolve360';
+    $Self->{'Organization'} = 'Digital Factory SN';
+    $Self->{'AdminEmail'} = 'support@digitalfactory.sn';
     $Self->{'NotificationSenderName'} = 'Résolve360 Notifications';
     $Self->{'NotificationSenderEmail'} = 'support@digitalfactory.sn';
     $Self->{'NotificationSubjectLostPassword'} = 'Nouveau mot de passe - Résolve360';
