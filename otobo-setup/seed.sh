@@ -193,8 +193,8 @@ WHERE article_id = 1;
 "
 log_ok "article_data_mime_plain mis à jour"
 
-# ─── 3. Supprimer les notifications email OTOBO/Rother ──────────
-log_section "3/6 Nettoyage notifications OTOBO"
+# ─── 3. Supprimer les notifications email OTOBO/Rother & injecter Politique de Confidentialité ──────────
+log_section "3/6 Nettoyage OTOBO & Politique de Confidentialité"
 
 run_sql "
 DELETE FROM system_data
@@ -203,6 +203,15 @@ WHERE data_key IN (
 );
 "
 log_ok "Entrées news/subscription OTOBO supprimées"
+
+run_sql "
+DELETE FROM data_storage WHERE ds_type = 'CustomerAccept';
+INSERT INTO data_storage (ds_type, ds_key, ds_value, create_time, create_by)
+VALUES 
+('CustomerAccept', 'fr', '{\"ContentType\":\"text/html\",\"Body\":\"<h1>Politique de Confidentialité — ${CLIENT_NAME}</h1><p>La protection de vos données personnelles et la confidentialité des informations traitées sur <strong>${CLIENT_NAME}</strong> constituent un engagement prioritaire pour <strong>Digital Factory SN</strong>.</p>&nbsp;<h2>1. Champ d\'application</h2><p>La présente Politique de Confidentialité s\'applique à l\'utilisation de la plate-forme de gestion des réclamations et du service client <strong>${CLIENT_NAME}</strong>.</p>&nbsp;<h2>2. Collecte et traitement des données</h2><p>Dans le cadre de la gestion et du suivi de vos réclamations, les données suivantes sont collectées et traitées :</p><ul><li><strong>Identité & Coordonnées :</strong> Prénom, nom, adresse e-mail, téléphone, identifiant usager.</li><li><strong>Réclamations & Correspondances :</strong> Objet, détails du dossier, pièces justificatives et échanges avec les agents.</li></ul><p>Ces informations sont exclusivement utilisées pour l\'instruction et la résolution de vos réclamations conformément à la réglementation en vigueur.</p>&nbsp;<h2>3. Protection & Sécurité</h2><p>Toutes les données sont chiffrées en transit et stockées au sein d\'infrastructures sécurisées. L\'accès aux dossiers est strictement réservé aux agents habilités.</p>&nbsp;<h2>4. Vos droits</h2><p>Vous disposez d\'un droit d\'accès, de rectification et de suivi de vos données en contactant notre équipe support à <a href=\\\"mailto:support@digitalfactory.sn\\\">support@digitalfactory.sn</a>.</p>\"}', NOW(), 1),
+('CustomerAccept', 'en', '{\"ContentType\":\"text/html\",\"Body\":\"<h1>Politique de Confidentialité — ${CLIENT_NAME}</h1><p>La protection de vos données personnelles et la confidentialité des informations traitées sur <strong>${CLIENT_NAME}</strong> constituent un engagement prioritaire pour <strong>Digital Factory SN</strong>.</p>&nbsp;<h2>1. Champ d\'application</h2><p>La présente Politique de Confidentialité s\'applique à l\'utilisation de la plate-forme de gestion des réclamations et du service client <strong>${CLIENT_NAME}</strong>.</p>&nbsp;<h2>2. Collecte et traitement des données</h2><p>Dans le cadre de la gestion et du suivi de vos réclamations, les données suivantes sont collectées et traitées :</p><ul><li><strong>Identité & Coordonnées :</strong> Prénom, nom, adresse e-mail, téléphone, identifiant usager.</li><li><strong>Réclamations & Correspondances :</strong> Objet, détails du dossier, pièces justificatives et échanges avec les agents.</li></ul><p>Ces informations sont exclusivement utilisées pour l\'instruction et la résolution de vos réclamations conformément à la réglementation en vigueur.</p>&nbsp;<h2>3. Protection & Sécurité</h2><p>Toutes les données sont chiffrées en transit et stockées au sein d\'infrastructures sécurisées. L\'accès aux dossiers est strictement réservé aux agents habilités.</p>&nbsp;<h2>4. Vos droits</h2><p>Vous disposez d\'un droit d\'accès, de rectification et de suivi de vos données en contactant notre équipe support à <a href=\\\"mailto:support@digitalfactory.sn\\\">support@digitalfactory.sn</a>.</p>\"}', NOW(), 1);
+"
+log_ok "Politique de Confidentialité Résolve360 injectée en base de données"
 
 # ─── 4. Configuration SysConfig — Branding ───────────────────────
 log_section "4/6 SysConfig branding étendu"

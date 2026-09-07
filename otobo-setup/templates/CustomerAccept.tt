@@ -1,0 +1,14 @@
+# --
+# Résolve360 — CustomerAccept.tt
+# --
+<div id='oooContent'>
+    <div id='oooHeader'>
+        <h1>Politique de Confidentialité — Résolve360</h1>
+    </div>
+    <div id='oooMainBox'>
+        <iframe src="[% Env("Baselink") %]Action=CustomerGenericContent&Subaction=Show&Key=Accept"></iframe>
+[% IF Data.AcceptButton %]
+        <h2 id='AcceptButton'><a href="[% Env("Baselink") %]Action=[% Env("Action") %];Accept=1" id="AcceptGDPR">Accepter et continuer <i class="fa fa-check-circle"></i></a></h2>
+[% END %]
+    </div>
+</div>
