@@ -1,21 +1,13 @@
 # Résolve360
 
 **Plateforme de Gestion des Réclamations Bancaires**  
-Powered by [OTOBO](https://otobo.de) | Built by [Digital Factory SN](https://digitalfactory.sn)
+Built by [Digital Factory SN](https://digitalfactory.sn)
 
 ---
 
 ## 🎯 À propos
 
 **Résolve360** est une solution complète de gestion des réclamations clients pour le secteur bancaire et financier en Afrique de l'Ouest. Elle est basée sur OTOBO (open-source ticket system) et configurée pour la conformité aux normes **ISO 10002** et aux directives **BCEAO**.
-
-## 🌐 Accès
-
-| Interface | URL |
-|-----------|-----|
-| 👤 Portail Client | https://reclam.digitalfactory.sn/otobo/customer.pl |
-| 🧑‍💼 Interface Agent | https://reclam.digitalfactory.sn/otobo/index.pl |
-| ⚙️ Administration | https://reclam.digitalfactory.sn/otobo/index.pl?Action=Admin |
 
 ## 🏗️ Architecture
 
@@ -37,19 +29,10 @@ Powered by [OTOBO](https://otobo.de) | Built by [Digital Factory SN](https://dig
     └── user-guide.md
 ```
 
-## ⚡ Stack technique
-
-- **Backend** : OTOBO 11.x (Perl/Plack)
-- **Base de données** : MariaDB LTS
-- **Recherche** : Elasticsearch
-- **Reverse Proxy** : Nginx Proxy Manager (OpenResty)
-- **Conteneurs** : Docker Compose
-- **Serveur** : VPS Linux (Ubuntu)
-
 ## 📋 Fonctionnalités
 
 ### Gestion des Réclamations
-- ✅ Portail client multilingue (FR/EN/Wolof)
+- ✅ Portail client multilingue (FR/EN
 - ✅ Dépôt de réclamations multi-canal (web, email, agent)
 - ✅ Suivi temps réel avec numéro de référence
 - ✅ Pièces jointes et preuves documentaires
