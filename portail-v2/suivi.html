@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivre ma Réclamation — Portail Client</title>
+  <meta name="description" content="Suivez l'avancement de votre réclamation en temps réel grâce à votre numéro de référence.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .suivi-layout { display: grid; grid-template-columns: 1fr 320px; gap: 2rem; padding: 3rem 0; }
+    @media (max-width:1024px) { .suivi-layout { grid-template-columns: 1fr; } }
+
+    .search-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+
+    .search-row .form-group { flex: 1; margin: 0; }
+
+    .result-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      animation: fadeInUp 0.4s ease;
+    }
+
+    .result-header {
+      padding: 1.75rem 2rem;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .result-body { padding: 2rem; }
+
+    .result-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 640px) { .result-meta { grid-template-columns: 1fr 1fr; } }
+
+    .meta-item {
+      padding: 1rem;
+      background: var(--primary-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--glass-border);
+    }
+    .meta-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .meta-value { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); }
+
+    .not-found {
+      text-align: center;
+      padding: 3rem;
+      animation: fadeInUp 0.3s ease;
+    }
+    .not-found-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .not-found h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .not-found p { color: var(--text-secondary); font-size: 0.9375rem; max-width: 400px; margin: 0 auto; }
+
+    .sla-gauge {
+      background: var(--primary-card);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      border: 1px solid var(--glass-border);
+      margin-bottom: 2rem;
+    }
+    .sla-label { font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; display: flex; justify-content: space-between; }
+    .sla-bar-outer { background: var(--primary); border-radius: var(--radius-full); height: 10px; overflow: hidden; }
+    .sla-bar-inner { height: 100%; border-radius: var(--radius-full); transition: width 0.8s ease; }
+    .sla-bar-inner.ok { background: linear-gradient(90deg, var(--success), #34d399); }
+    .sla-bar-inner.warn { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+    .sla-bar-inner.crit { background: linear-gradient(90deg, var(--danger), #f87171); }
+
+    .response-card {
+      background: rgba(59,130,246,0.05);
+      border: 1px solid rgba(59,130,246,0.15);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .response-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .response-from { font-size: 0.875rem; font-weight: 600; color: #93c5fd; }
+    .response-date { font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .response-body { font-size: 0.9375rem; color: var(--text-secondary); line-height: 1.7; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Portail Réclamations</span>
+          <span class="brand-sub">SERVICE CLIENT</span>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Accueil</a>
+        <a href="suivi.html" class="nav-link active">Suivi</a>
+        <a href="faq.html" class="nav-link">FAQ</a>
+        <a href="deposer.html" class="btn btn-primary btn-sm">Déposer une réclamation</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="container">
+      <h1>Suivi de réclamation</h1>
+      <p>Entrez votre numéro de référence pour consulter l'état de votre dossier en temps réel</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="suivi-layout">
+
+      <!-- RECHERCHE + RÉSULTATS -->
+      <div>
+        <!-- BARRE DE RECHERCHE -->
+        <div class="search-card">
+          <h2 style="font-size:1.25rem;font-weight:800;margin-bottom:0.5rem;">Rechercher votre dossier</h2>
+          <p style="color:var(--text-secondary);font-size:0.875rem;margin-bottom:1.5rem;">Votre numéro de référence vous a été envoyé par email lors du dépôt de votre réclamation.</p>
+
+          <div class="search-row">
+            <div class="form-group">
+              <label class="form-label" for="ticketRef">Numéro de référence</label>
+              <input type="text" class="form-control" id="ticketRef" placeholder="Ex: 2024010001 ou REC-XXXXXXXXX" autocomplete="off"
+                style="font-family:'JetBrains Mono',monospace; letter-spacing: 1px; text-transform:uppercase;"
+                onkeydown="if(event.key==='Enter') searchTicket()">
+            </div>
+            <button class="btn btn-primary btn-lg" onclick="searchTicket()" id="searchBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Rechercher
+            </button>
+          </div>
+
+          <div id="searchError" class="alert alert-danger" style="display:none;margin-top:1rem;"></div>
+        </div>
+
+        <!-- RÉSULTAT -->
+        <div id="resultContainer"></div>
+      </div>
+
+      <!-- SIDEBAR INFO -->
+      <div>
+        <div class="info-card glass" style="padding:1.5rem;border-radius:var(--radius-lg);margin-bottom:1.25rem;">
+          <h4 style="font-size:0.875rem;font-weight:700;margin-bottom:1rem;">📊 États possibles</h4>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="status-badge status-open">Nouveau</span>
+              <span style="font-size:0.8125rem;color:var(--text-secondary);">Dossier reçu, en attente d'affectation</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="status-badge status-pending">En traitement</span>
+              <span style="font-size:0.8125rem;color:var(--text-secondary);">Instruction en cours</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="status-badge status-resolved">Résolu</span>
+              <span style="font-size:0.8125rem;color:var(--text-secondary);">Réclamation traitée et clôturée</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="status-badge status-urgent">Urgent</span>
+              <span style="font-size:0.8125rem;color:var(--text-secondary);">Traitement prioritaire en cours</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card glass" style="padding:1.5rem;border-radius:var(--radius-lg);margin-bottom:1.25rem;">
+          <h4 style="font-size:0.875rem;font-weight:700;margin-bottom:1rem;">⏱ Délais SLA</h4>
+          <div style="font-size:0.8125rem;color:var(--text-secondary);line-height:2;">
+            <p><strong style="color:var(--text-primary);">Accusé réception :</strong> 24h</p>
+            <p><strong style="color:var(--text-primary);">Standard :</strong> 30 jours ouvrés</p>
+            <p><strong style="color:var(--danger);">Fraude urgente :</strong> 5 jours ouvrés</p>
+            <p><strong style="color:var(--danger);">Virement bloqué :</strong> 72h</p>
+          </div>
+        </div>
+
+        <div class="info-card glass" style="padding:1.5rem;border-radius:var(--radius-lg);">
+          <h4 style="font-size:0.875rem;font-weight:700;margin-bottom:0.75rem;">📞 Besoin d'aide ?</h4>
+          <p style="font-size:0.8125rem;color:var(--text-secondary);line-height:1.7;margin-bottom:1rem;">Pour toute urgence ou difficulté à retrouver votre dossier, contactez notre service client.</p>
+          <a href="deposer.html" class="btn btn-ghost" style="width:100%;justify-content:center;font-size:0.8125rem;">
+            Nouvelle réclamation
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© <span id="year"></span> — Portail de Gestion des Réclamations. Tous droits réservés.</p>
+        <div class="footer-badges">
+          <span class="footer-badge">ISO 10002</span>
+          <span class="footer-badge">Données Sécurisées</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="portal.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Auto-remplir depuis URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('ref')) {
+      document.getElementById('ticketRef').value = urlParams.get('ref');
+      setTimeout(searchTicket, 300);
+    }
+
+    async function searchTicket() {
+      const ref = document.getElementById('ticketRef').value.trim().toUpperCase();
+      const errEl = document.getElementById('searchError');
+      const btn = document.getElementById('searchBtn');
+
+      errEl.style.display = 'none';
+
+      if (!ref) {
+        errEl.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Veuillez entrer un numéro de référence.';
+        errEl.style.display = 'flex';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<div class="loader-spinner" style="width:18px;height:18px;border-width:2px;"></div> Recherche...';
+
+      const container = document.getElementById('resultContainer');
+      container.innerHTML = '<div style="text-align:center;padding:3rem;"><div class="loader-spinner" style="margin:auto;"></div></div>';
+
+      try {
+        // Tentative via API OTOBO
+        const data = await window.portalAPI.searchTicket(ref);
+
+        if (data && data.Ticket && data.Ticket.length > 0) {
+          const t = data.Ticket[0];
+          renderResult(t.TicketNumber, t.Title, t.State, t.Queue, t.Created, t.Changed, t.Priority, false, null);
+        } else {
+          // Démo : si le numéro commence par REC- et a été créé via le portail (session)
+          const demoTicket = getDemoTicket(ref);
+          if (demoTicket) {
+            renderResult(demoTicket.ref, demoTicket.title, demoTicket.state, demoTicket.queue, demoTicket.created, demoTicket.updated, demoTicket.priority, demoTicket.hasResponse, demoTicket.response);
+          } else {
+            renderNotFound(ref);
+          }
+        }
+      } catch (err) {
+        renderNotFound(ref);
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Rechercher';
+    }
+
+    function getDemoTicket(ref) {
+      // Récupérer depuis sessionStorage si soumis dans cette session
+      try {
+        const stored = sessionStorage.getItem('lastTicket');
+        if (stored) {
+          const t = JSON.parse(stored);
+          if (t.ref === ref || t.ref.includes(ref) || ref.includes(t.ref)) return t;
+        }
+      } catch(e) {}
+      return null;
+    }
+
+    function renderResult(ref, title, state, queue, created, updated, priority, hasResponse, response) {
+      const stateClass = { 'new': 'status-open', 'open': 'status-pending', 'closed successful': 'status-resolved', 'closed unsuccessful': 'status-resolved', 'pending reminder': 'status-pending' };
+      const stateLabel = { 'new': 'Nouveau', 'open': 'En traitement', 'closed successful': 'Résolu ✓', 'closed unsuccessful': 'Clôturé', 'pending reminder': 'En attente' };
+      const isUrgent = priority === '1 very high' || priority?.includes('high');
+      const stateCls = isUrgent ? 'status-urgent' : (stateClass[state] || 'status-open');
+      const stateL = stateLabel[state] || state || 'En cours';
+
+      // Calcul progression SLA
+      const slaTotal = isUrgent ? 5 : 30;
+      const daysPassed = Math.max(1, Math.floor((Date.now() - new Date(created).getTime()) / (1000 * 3600 * 24)));
+      const slaPercent = Math.min(100, (daysPassed / slaTotal * 100)).toFixed(0);
+      const slaCls = slaPercent < 50 ? 'ok' : slaPercent < 80 ? 'warn' : 'crit';
+
+      const html = `
+        <div class="result-card">
+          <div class="result-header">
+            <div>
+              <div style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:4px;">Numéro de référence</div>
+              <div class="ticket-ref">${ref}</div>
+            </div>
+            <div style="text-align:right;">
+              <span class="status-badge ${stateCls}">${isUrgent ? '🚨 ' : ''}${stateL}</span>
+              ${isUrgent ? '<div style="font-size:0.75rem;color:var(--danger);margin-top:6px;">Traitement prioritaire — 5 jours</div>' : ''}
+            </div>
+          </div>
+          <div class="result-body">
+            <h3 style="font-size:1.125rem;font-weight:700;margin-bottom:1.5rem;">${title || 'Réclamation en cours de traitement'}</h3>
+
+            <div class="result-meta">
+              <div class="meta-item">
+                <div class="meta-label">Catégorie</div>
+                <div class="meta-value">${queue?.split('::').pop() || queue || 'Réclamations'}</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Déposé le</div>
+                <div class="meta-value">${created ? new Date(created).toLocaleDateString('fr-FR') : '—'}</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Dernière activité</div>
+                <div class="meta-value">${updated ? new Date(updated).toLocaleDateString('fr-FR') : '—'}</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Délai applicable</div>
+                <div class="meta-value ${isUrgent ? 'urgent-val' : ''}">${isUrgent ? '5 jours ouvrés' : '30 jours ouvrés'}</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">Jours écoulés</div>
+                <div class="meta-value">${daysPassed} jour(s)</div>
+              </div>
+              <div class="meta-item">
+                <div class="meta-label">SLA restant</div>
+                <div class="meta-value ${slaCls === 'crit' ? 'urgent-val' : ''}">${Math.max(0, slaTotal - daysPassed)} jour(s)</div>
+              </div>
+            </div>
+
+            <div class="sla-gauge">
+              <div class="sla-label">
+                <span>Avancement du délai SLA</span>
+                <span>${slaPercent}% écoulé</span>
+              </div>
+              <div class="sla-bar-outer">
+                <div class="sla-bar-inner ${slaCls}" style="width:${slaPercent}%"></div>
+              </div>
+            </div>
+
+            <!-- TIMELINE -->
+            <h4 style="font-size:0.9375rem;font-weight:700;margin-bottom:1.5rem;">Historique du dossier</h4>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot done"></div>
+                <div class="timeline-date">${created ? new Date(created).toLocaleString('fr-FR') : '—'}</div>
+                <div class="timeline-title">📥 Réclamation reçue</div>
+                <div class="timeline-body">Votre réclamation a été enregistrée dans notre système.</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot done"></div>
+                <div class="timeline-date">Dans les 24h suivant le dépôt</div>
+                <div class="timeline-title">📧 Accusé de réception envoyé</div>
+                <div class="timeline-body">Un email de confirmation avec votre numéro de référence vous a été adressé.</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot ${state !== 'new' ? 'done' : 'active'}"></div>
+                <div class="timeline-date">${state !== 'new' ? (updated ? new Date(updated).toLocaleString('fr-FR') : '—') : 'En cours'}</div>
+                <div class="timeline-title">🔍 Instruction du dossier</div>
+                <div class="timeline-body">Nos équipes spécialisées analysent votre réclamation et rassemblent les éléments nécessaires.</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot ${['closed successful', 'closed unsuccessful'].includes(state) ? 'done' : ''}"></div>
+                <div class="timeline-date">${['closed successful', 'closed unsuccessful'].includes(state) ? (updated ? new Date(updated).toLocaleString('fr-FR') : '—') : 'À venir'}</div>
+                <div class="timeline-title">✅ Réponse définitive</div>
+                <div class="timeline-body">Notre décision motivée vous sera communiquée par email dans les délais réglementaires.</div>
+              </div>
+            </div>
+
+            ${hasResponse && response ? `
+            <div class="response-card">
+              <div class="response-header">
+                <span class="response-from">💬 Réponse de notre équipe</span>
+                <span class="response-date">${response.date}</span>
+              </div>
+              <div class="response-body">${response.text}</div>
+            </div>
+            ` : ''}
+
+            <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--glass-border);display:flex;gap:1rem;flex-wrap:wrap;">
+              <a href="deposer.html" class="btn btn-ghost">Nouvelle réclamation</a>
+              <a href="index.html" class="btn btn-ghost">Retour à l'accueil</a>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('resultContainer').innerHTML = html;
+    }
+
+    function renderNotFound(ref) {
+      document.getElementById('resultContainer').innerHTML = `
+        <div class="result-card">
+          <div class="not-found">
+            <div class="not-found-icon">🔍</div>
+            <h3>Dossier introuvable</h3>
+            <p>Aucun dossier correspondant au numéro <strong style="color:var(--accent);font-family:'JetBrains Mono',monospace;">${ref}</strong> n'a été trouvé dans notre système.</p>
+            <div style="margin-top:2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-ghost" onclick="document.getElementById('ticketRef').value='';document.getElementById('ticketRef').focus();">Nouvelle recherche</button>
+              <a href="deposer.html" class="btn btn-primary">Déposer une réclamation</a>
+            </div>
+            <div class="alert alert-info" style="margin-top:2rem;text-align:left;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <div>Vérifiez le numéro dans l'email d'accusé de réception. Le numéro est au format <strong>2024010001</strong> ou <strong>REC-XXXXXXXXX</strong>.</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+# Résolve360 — .gitignore
+# ========================
+
+# Secrets & credentials
+.env
+.env.*
+*.secret
+secrets/
+credentials/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+
+# Logs
+*.log
+logs/
+
+# Node (si utilisé)
+node_modules/
+npm-debug.log
+
+# Docker volumes (données runtime)
+data/
+volumes/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*.orig
