@@ -18,6 +18,10 @@ sub Load {
     $Self->{'NotificationSubjectLostPassword'} = 'Nouveau mot de passe - Résolve360';
     $Self->{'NotificationSubjectLostPasswordToken'} = 'Demande de réinitialisation de mot de passe - Résolve360';
 
+    # Global Default Language
+    $Self->{'DefaultLanguage'} = 'fr';
+    $Self->{'CustomerDefaultLanguage'} = 'fr';
+
     # Security & White-labeling
     $Self->{'Secure::DisableBanner'} = 1;
 
