@@ -244,11 +244,15 @@ log_ok "Secure::DisableBanner → YAML 1"
 log_section "5/6 Fichier kernel ZZZAResolve360"
 
 KERNEL_CONFIG_FILE="${SCRIPT_DIR}/configs/ZZZAResolve360.pm"
+if [[ ! -f "$KERNEL_CONFIG_FILE" ]]; then
+  KERNEL_CONFIG_FILE="${SCRIPT_DIR}/ZZZAResolve360.pm"
+fi
+
 if [[ -f "$KERNEL_CONFIG_FILE" ]]; then
   if ! $DRY_RUN; then
     docker exec "$WEB_CONTAINER" mkdir -p /opt/otobo/Kernel/Config/Files/User 2>/dev/null || true
     if docker cp "$KERNEL_CONFIG_FILE" "${WEB_CONTAINER}:/opt/otobo/Kernel/Config/Files/User/ZZZAResolve360.pm" 2>/dev/null; then
-      docker exec "$WEB_CONTAINER" chown -R otobo:otobo /opt/otobo/Kernel/Config/Files/User 2>/dev/null || true
+      docker exec "$WEB_CONTAINER" chmod 644 /opt/otobo/Kernel/Config/Files/User/ZZZAResolve360.pm 2>/dev/null || true
       log_ok "Config kernel copiée dans Kernel/Config/Files/User/"
     else
       log_warn "Impossible de copier la config kernel"
