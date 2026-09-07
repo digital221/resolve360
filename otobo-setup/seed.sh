@@ -266,8 +266,22 @@ done
 run_sql "
 UPDATE sysconfig_default SET effective_value = '--- \'1\'\n' WHERE name = 'Secure::DisableBanner';
 UPDATE sysconfig_default_version SET effective_value = '--- \'1\'\n' WHERE name = 'Secure::DisableBanner';
+
+UPDATE sysconfig_default SET effective_value = '--- Résolve360 Notifications\n' WHERE name = 'NotificationSenderName';
+UPDATE sysconfig_default SET effective_value = '--- support@digitalfactory.sn\n' WHERE name = 'NotificationSenderEmail';
+UPDATE sysconfig_default SET effective_value = '--- Nouveau mot de passe - Résolve360\n' WHERE name = 'NotificationSubjectLostPassword';
+UPDATE sysconfig_default SET effective_value = '--- Demande de réinitialisation de mot de passe - Résolve360\n' WHERE name = 'NotificationSubjectLostPasswordToken';
+UPDATE sysconfig_default SET effective_value = '--- fr\n' WHERE name = 'CustomerDefaultLanguage';
+UPDATE sysconfig_default SET effective_value = '--- Digital Factory SN\n' WHERE name = 'Organization';
+
+UPDATE sysconfig_modified SET effective_value = '--- Résolve360 Notifications\n' WHERE name = 'NotificationSenderName';
+UPDATE sysconfig_modified SET effective_value = '--- support@digitalfactory.sn\n' WHERE name = 'NotificationSenderEmail';
+UPDATE sysconfig_modified SET effective_value = '--- Nouveau mot de passe - Résolve360\n' WHERE name = 'NotificationSubjectLostPassword';
+UPDATE sysconfig_modified SET effective_value = '--- Demande de réinitialisation de mot de passe - Résolve360\n' WHERE name = 'NotificationSubjectLostPasswordToken';
+UPDATE sysconfig_modified SET effective_value = '--- fr\n' WHERE name = 'CustomerDefaultLanguage';
+UPDATE sysconfig_modified SET effective_value = '--- Digital Factory SN\n' WHERE name = 'Organization';
 "
-log_ok "Secure::DisableBanner → YAML 1"
+log_ok "Secure::DisableBanner & SysConfig e-mails/langue mis à jour"
 
 # ─── 5. File de seed — Config kernel ─────────────────────────────
 log_section "5/6 Fichier kernel ZZZAResolve360"
