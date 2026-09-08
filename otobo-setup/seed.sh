@@ -29,7 +29,9 @@ log_section() { echo -e "\n${BOLD}${CYAN}══ $* ══${NC}"; }
 COMPOSE_PROJECT="${RESOLVE360_PROJECT:-otobo-reclam}"
 DB_ROOT_PASS="${RESOLVE360_DB_ROOT_PASS:-}"
 CLIENT_NAME="${RESOLVE360_CLIENT:-Résolve360}"
-CLIENT_FQDN="${RESOLVE360_FQDN:-reclam.digitalfactory.sn}"
+ORGANIZATION_NAME="${RESOLVE360_ORGANIZATION:-Digital Factory SN}"
+SUPPORT_EMAIL="${RESOLVE360_SUPPORT_EMAIL:-support@digitalfactory.sn}"
+ADMIN_EMAIL="${RESOLVE360_ADMIN_EMAIL:-admin@${CLIENT_FQDN}}"
 DRY_RUN=false
 
 # Parse args
@@ -39,6 +41,8 @@ while [[ $# -gt 0 ]]; do
     --db-pass)   DB_ROOT_PASS="$2"; shift 2 ;;
     --client)    CLIENT_NAME="$2"; shift 2 ;;
     --fqdn)      CLIENT_FQDN="$2"; shift 2 ;;
+    --org)       ORGANIZATION_NAME="$2"; shift 2 ;;
+    --email)     SUPPORT_EMAIL="$2"; shift 2 ;;
     --dry-run)   DRY_RUN=true; shift ;;
     *) log_error "Option inconnue: $1"; exit 1 ;;
   esac
