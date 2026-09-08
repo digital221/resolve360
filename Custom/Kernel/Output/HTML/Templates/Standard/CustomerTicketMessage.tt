@@ -1,0 +1,83 @@
+# --
+# Custom/Kernel/Output/HTML/Templates/Standard/CustomerTicketMessage.tt - Banking Complaint Form
+# --
+
+<div id="MainBox" class="TicketMessage ARIARoleMain">
+    <div class="Content">
+        <div style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); color: #FFFFFF; padding: 25px 30px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 10px 25px rgba(15,23,42,0.12); border-left: 6px solid #D97706;">
+            <h1 style="margin: 0 0 8px 0; font-size: 24px; font-weight: 800; color: #FFFFFF; letter-spacing: 0.5px;">Déposer une Réclamation Bancaire</h1>
+            <p style="margin: 0; color: #94A3B8; font-size: 14px; font-weight: 500;">Portail officiel sécurisé conforme à la réglementation BCEAO (Circulaire N° 002-2020/CB/C). Veuillez renseigner le formulaire ci-dessous.</p>
+        </div>
+
+        <form action="[% Env("CGIHandle") %]" method="post" enctype="multipart/form-data" class="Validate PreventMultipleSubmits">
+            <input type="hidden" name="Action" value="[% Env("Action") %]"/>
+            <input type="hidden" name="Subaction" value="Create"/>
+            <input type="hidden" name="FormID" value="[% Data.FormID | html %]"/>
+            <input type="hidden" name="Expand" value=""/>
+
+            <fieldset style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 25px; box-shadow: 0 4px 12px rgba(15,23,42,0.05);">
+
+[% RenderBlockStart("Queue") %]
+                <div class="Row">
+                    <div class="FieldCell">
+                        <div class="Field">
+                            [% Data.ToStrg %]
+                        </div>
+                        <label for="Dest" class="Mandatory">
+                            Unité de Traitement / Queue <span class="Marker">*</span>
+                        </label>
+                        <div id="DestError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                        <div id="DestServerError" class="TooltipErrorMessage NoJavaScriptMessage[% Data.QueueInvalid | html %]"><p>[% Translate("This field is required.") | html %]</p></div>
+                    </div>
+                </div>
+[% RenderBlockEnd("Queue") %]
+
+[% Data.DynamicFieldHTML %]
+
+                <div class="Row [% Data.SubjectHiddenClass | html %]">
+                    <div class="FieldCell">
+                        <div class="Field">
+                            <input title="[% Translate("Subject") | html %]" type="text" id="Subject" name="Subject" value="[% Data.Subject | html %]" class="[% Data.SubjectValidate | html %] [% Data.SubjectInvalid | html %]" placeholder="Objet de la réclamation (ex: Contestation débit GAB 150.000 FCFA)" />
+                        </div>
+                        <label for="Subject" class="Mandatory">
+                            Objet / Intitulé de la Réclamation <span class="Marker">*</span>
+                        </label>
+                        <div id="SubjectError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                        <div id="SubjectServerError" class="TooltipErrorMessage NoJavaScriptMessage[% Data.SubjectInvalid | html %]"><p>[% Translate("This field is required.") | html %]</p></div>
+                    </div>
+                </div>
+
+                <div class="Row [% Data.BodyHiddenClass | html %]">
+                    <div class="FieldCell">
+                        <div class="Field RichTextField">
+                            <div class="RichTextHolder">
+                                <textarea id="RichText" class="RichText [% Data.BodyValidate | html %] [% Data.BodyInvalid | html %]" name="Body" rows="12" cols="[% Config("Ticket::Frontend::TextAreaNote") %]" placeholder="Veuillez décrire précisément les faits, la date, l'agence et les références de la transaction concernée...">[% Data.Body | html %]</textarea>
+                            </div>
+                            <div id="RichTextError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                            <div id="RichTextServerError" class="TooltipErrorMessage NoJavaScriptMessage[% Data.BodyInvalid | html %]"><p>[% Translate("This field is required.") | html %]</p></div>
+                        </div>
+                        <label for="RichText" class="Mandatory">Description détaillée des faits <span class="Marker">*</span></label>
+                    </div>
+                </div>
+
+                <div class="Row [% Data.AttachmentsHiddenClass | html %]">
+                    <div class="FieldCell">
+                        <div id="oooAttachments" class="Field">
+                            <div class="DnDUploadBox">
+[% INCLUDE "FormElements/CustomerAttachmentList.tt" %]
+                            </div>
+                        </div>
+                        <label>Pièces Jointes & Justificatifs (Reçu GAB, Extrait de compte, Pièce d'identité)</label>
+                    </div>
+                </div>
+
+            </fieldset>
+
+            <div id="BottomActionRow" class="ActionRow" style="margin-top: 20px; text-align: right;">
+                <button id="submitRichText" class="oooL" accesskey="g" title="Transmettre la Réclamation Bancaire" type="submit" value="Transmettre la Réclamation" style="background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%); color: #FFFFFF; font-size: 15px; font-weight: 700; padding: 12px 28px; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.3);">
+                    🚀 Transmettre la Réclamation Bancaire
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

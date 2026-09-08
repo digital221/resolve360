@@ -1,0 +1,258 @@
+/* ==========================================================================
+   RESOLVE360 - BANKING DESIGN SYSTEM & UX ENHANCEMENTS
+   Conforme à la Norme BCEAO Circulaire N° 002-2020/CB/C
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --r360-navy-dark: #0F172A;
+    --r360-navy-primary: #1E3A8A;
+    --r360-blue-accent: #2563EB;
+    --r360-gold: #D97706;
+    --r360-gold-light: #FBBF24;
+    --r360-bg-light: #F8FAFC;
+    --r360-card-bg: #FFFFFF;
+    --r360-text-main: #1E293B;
+    --r360-text-muted: #64748B;
+    --r360-border: #E2E8F0;
+    --r360-shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.05);
+    --r360-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+    --r360-shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.12);
+}
+
+/* Global Reset & Typography */
+body, html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    background-color: var(--r360-bg-light) !important;
+    color: var(--r360-text-main) !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Header & Navbar Styling */
+#Header, .Header, header.Header {
+    background: linear-gradient(135deg, var(--r360-navy-dark) 0%, var(--r360-navy-primary) 100%) !important;
+    border-bottom: 4px solid var(--r360-gold) !important;
+    box-shadow: var(--r360-shadow-md) !important;
+    padding: 0 20px !important;
+}
+
+#Header #Logo, .Header .Logo, a.Logo {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    color: #FFFFFF !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    padding: 12px 0 !important;
+    text-decoration: none !important;
+}
+
+#Header #Logo::before, .Header .Logo::before {
+    content: "🛡️ RESOLVE360";
+    background: linear-gradient(90deg, #FFFFFF 0%, var(--r360-gold-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+#Header #Logo img, .Header .Logo img {
+    display: none !important; /* Replace default generic logo with Resolve360 Banking logo */
+}
+
+/* Navigation Items */
+#Navigation, .Navigation, ul.Navigation {
+    background: transparent !important;
+}
+
+#Navigation > li > a, .Navigation > li > a {
+    color: #E2E8F0 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    padding: 14px 18px !important;
+    transition: all 0.2s ease !important;
+    border-radius: 6px !important;
+}
+
+#Navigation > li > a:hover, .Navigation > li > a:hover, #Navigation > li.Selected > a {
+    color: var(--r360-gold-light) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Welcome Banner / Hero Area */
+.CustomerDashboardHeader, .WelcomeBanner, .HeroArea {
+    background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%) !important;
+    color: #FFFFFF !important;
+    border-radius: 12px !important;
+    padding: 24px 30px !important;
+    margin-bottom: 25px !important;
+    box-shadow: var(--r360-shadow-lg) !important;
+    border-left: 6px solid var(--r360-gold) !important;
+}
+
+.CustomerDashboardHeader h2, .WelcomeBanner h1 {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    margin-bottom: 8px !important;
+}
+
+.CustomerDashboardHeader p, .WelcomeBanner p {
+    color: #94A3B8 !important;
+    font-size: 14px !important;
+}
+
+/* Form Container & Cards */
+.MainContent, .Content, form.Validate {
+    background-color: var(--r360-card-bg) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--r360-shadow-md) !important;
+    border: 1px solid var(--r360-border) !important;
+    padding: 24px !important;
+    margin-top: 15px !important;
+}
+
+fieldset {
+    border: 1px solid var(--r360-border) !important;
+    border-radius: 8px !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+    background: #FAFAFA !important;
+}
+
+legend {
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    color: var(--r360-navy-primary) !important;
+    padding: 0 10px !important;
+}
+
+/* Form Inputs & Selects */
+input[type="text"], input[type="password"], input[type="email"], select, textarea {
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 6px !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    color: var(--r360-text-main) !important;
+    background-color: #FFFFFF !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+    box-sizing: border-box !important;
+}
+
+input[type="text"]:focus, select:focus, textarea:focus {
+    border-color: var(--r360-blue-accent) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    outline: none !important;
+}
+
+label {
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    color: #334155 !important;
+    margin-bottom: 6px !important;
+    display: inline-block !important;
+}
+
+label.Mandatory span.Marker {
+    color: #DC2626 !important;
+    font-weight: bold !important;
+}
+
+/* Primary Action Buttons */
+.Button, button, input[type="submit"], a.Button {
+    background: linear-gradient(135deg, var(--r360-navy-primary) 0%, var(--r360-blue-accent) 100%) !important;
+    color: #FFFFFF !important;
+    border-radius: 8px !important;
+    border: none !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    padding: 10px 22px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2) !important;
+    transition: all 0.2s ease-in-out !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.Button:hover, button:hover, input[type="submit"]:hover, a.Button:hover {
+    background: linear-gradient(135deg, #1E40AF 0%, #1D4ED8 100%) !important;
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Status Badges */
+.State, .StatusBadge {
+    display: inline-block !important;
+    padding: 4px 12px !important;
+    border-radius: 20px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.State.new, .State.nouveau {
+    background-color: #EEF2FF !important;
+    color: #4338CA !important;
+    border: 1px solid #C7D2FE !important;
+}
+
+.State.open, .State.encours {
+    background-color: #FEF3C7 !important;
+    color: #B45309 !important;
+    border: 1px solid #FDE68A !important;
+}
+
+.State.closed, .State.clos, .State.résolu {
+    background-color: #D1FAE5 !important;
+    color: #047857 !important;
+    border: 1px solid #A7F3D0 !important;
+}
+
+/* Tables & Ticket Overviews */
+table.Overview, table.DataTable {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    border: 1px solid var(--r360-border) !important;
+}
+
+table.Overview th, table.DataTable th {
+    background-color: #F1F5F9 !important;
+    color: #475569 !important;
+    font-weight: 700 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    padding: 12px 16px !important;
+    border-bottom: 2px solid var(--r360-border) !important;
+}
+
+table.Overview td, table.DataTable td {
+    padding: 12px 16px !important;
+    border-bottom: 1px solid #F1F5F9 !important;
+    font-size: 14px !important;
+}
+
+table.Overview tr:hover, table.DataTable tr:hover {
+    background-color: #F8FAFC !important;
+}
+
+/* Footer White-Labeling */
+#Footer, .Footer, footer.Footer {
+    background-color: var(--r360-navy-dark) !important;
+    color: #94A3B8 !important;
+    padding: 16px 20px !important;
+    font-size: 13px !important;
+    text-align: center !important;
+    border-top: 1px solid #1E293B !important;
+}
+
+#Footer a, .Footer a {
+    color: var(--r360-gold-light) !important;
+    text-decoration: none !important;
+}
