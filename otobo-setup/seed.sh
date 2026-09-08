@@ -267,19 +267,19 @@ run_sql "
 UPDATE sysconfig_default SET effective_value = '--- \'1\'\n' WHERE name = 'Secure::DisableBanner';
 UPDATE sysconfig_default_version SET effective_value = '--- \'1\'\n' WHERE name = 'Secure::DisableBanner';
 
-UPDATE sysconfig_default SET effective_value = '--- Résolve360 Notifications\n' WHERE name = 'NotificationSenderName';
-UPDATE sysconfig_default SET effective_value = '--- support@digitalfactory.sn\n' WHERE name = 'NotificationSenderEmail';
-UPDATE sysconfig_default SET effective_value = '--- Nouveau mot de passe - Résolve360\n' WHERE name = 'NotificationSubjectLostPassword';
-UPDATE sysconfig_default SET effective_value = '--- Demande de réinitialisation de mot de passe - Résolve360\n' WHERE name = 'NotificationSubjectLostPasswordToken';
+UPDATE sysconfig_default SET effective_value = '--- ${CLIENT_NAME} Notifications\n' WHERE name = 'NotificationSenderName';
+UPDATE sysconfig_default SET effective_value = '--- ${SUPPORT_EMAIL}\n' WHERE name = 'NotificationSenderEmail';
+UPDATE sysconfig_default SET effective_value = '--- Nouveau mot de passe - ${CLIENT_NAME}\n' WHERE name = 'NotificationSubjectLostPassword';
+UPDATE sysconfig_default SET effective_value = '--- Demande de réinitialisation de mot de passe - ${CLIENT_NAME}\n' WHERE name = 'NotificationSubjectLostPasswordToken';
 UPDATE sysconfig_default SET effective_value = '--- fr\n' WHERE name = 'CustomerDefaultLanguage';
-UPDATE sysconfig_default SET effective_value = '--- Digital Factory SN\n' WHERE name = 'Organization';
+UPDATE sysconfig_default SET effective_value = '--- ${ORGANIZATION_NAME}\n' WHERE name = 'Organization';
 
-UPDATE sysconfig_modified SET effective_value = '--- Résolve360 Notifications\n' WHERE name = 'NotificationSenderName';
-UPDATE sysconfig_modified SET effective_value = '--- support@digitalfactory.sn\n' WHERE name = 'NotificationSenderEmail';
-UPDATE sysconfig_modified SET effective_value = '--- Nouveau mot de passe - Résolve360\n' WHERE name = 'NotificationSubjectLostPassword';
-UPDATE sysconfig_modified SET effective_value = '--- Demande de réinitialisation de mot de passe - Résolve360\n' WHERE name = 'NotificationSubjectLostPasswordToken';
+UPDATE sysconfig_modified SET effective_value = '--- ${CLIENT_NAME} Notifications\n' WHERE name = 'NotificationSenderName';
+UPDATE sysconfig_modified SET effective_value = '--- ${SUPPORT_EMAIL}\n' WHERE name = 'NotificationSenderEmail';
+UPDATE sysconfig_modified SET effective_value = '--- Nouveau mot de passe - ${CLIENT_NAME}\n' WHERE name = 'NotificationSubjectLostPassword';
+UPDATE sysconfig_modified SET effective_value = '--- Demande de réinitialisation de mot de passe - ${CLIENT_NAME}\n' WHERE name = 'NotificationSubjectLostPasswordToken';
 UPDATE sysconfig_modified SET effective_value = '--- fr\n' WHERE name = 'CustomerDefaultLanguage';
-UPDATE sysconfig_modified SET effective_value = '--- Digital Factory SN\n' WHERE name = 'Organization';
+UPDATE sysconfig_modified SET effective_value = '--- ${ORGANIZATION_NAME}\n' WHERE name = 'Organization';
 "
 log_ok "Secure::DisableBanner & SysConfig e-mails/langue mis à jour"
 
@@ -316,7 +316,7 @@ if ! $DRY_RUN; then
   docker exec "$WEB_CONTAINER" perl -pi -e 's/Il y a %s erreur de réseau possibles./%s a détecté un problème de réseau./g' /opt/otobo/Kernel/Language/fr.pm 2>/dev/null
   
   # Génération du module de traduction personnalisé fr_Custom.pm
-  docker exec -i "$WEB_CONTAINER" bash -c 'cat << "EOF" > /opt/otobo/Kernel/Language/fr_Custom.pm
+  docker exec -i "$WEB_CONTAINER" bash -c "cat << 'EOF_PERL' > /opt/otobo/Kernel/Language/fr_Custom.pm
 package Kernel::Language::fr_Custom;
 
 use strict;
@@ -324,35 +324,35 @@ use warnings;
 use utf8;
 
 sub Data {
-    my $Self = shift;
-    my $Lang = $Self->{Translation};
+    my \$Self = shift;
+    my \$Lang = \$Self->{Translation};
 
-    # Overrides and custom French translations for Resolve360
-    $Lang->{"Ticket Search"}               = "Recherche réclamation";
-    $Lang->{"Ticket Search."}              = "Recherche réclamation";
-    $Lang->{"Create%sa ticket"}             = "Créer%sune réclamation";
-    $Lang->{"Create a ticket"}              = "Créer une réclamation";
-    $Lang->{"Your last tickets"}            = "Vos dernières réclamations";
-    $Lang->{"Welcome %s, to your OTOBO."}   = "Bienvenue %s sur votre espace Résolve360.";
-    $Lang->{"This service portal is available to you all day every day."} = "Votre portail de gestion des réclamations est accessible 24h/24 et 7j/7.";
-    $Lang->{"Explore >"}                    = "Découvrir Digital Factory SN >";
-    $Lang->{"Message of the day"}           = "Message du jour";
-    $Lang->{"Your external tools"}          = "Vos outils externes";
-    $Lang->{"Overview"}                     = "Aperçu";
-    $Lang->{"Network error"}                = "Erreur réseau. Veuillez réessayer.";
-    $Lang->{"OTOBO 11.1 | Service Management"} = "Résolve360 | Service Client";
-    $Lang->{"Your Tickets. Your OTOBO."}   = "Vos Réclamations. Votre Espace Résolve360.";
-    $Lang->{"OTOBO News"}                   = "Nouveautés Résolve360";
-    $Lang->{"News about OTOBO."}            = "Nouveautés à propos de Résolve360.";
-    $Lang->{"Jump to OTOBO!"}              = "Accéder à Résolve360 !";
+    # Overrides and custom French translations for ${CLIENT_NAME}
+    \$Lang->{\"Ticket Search\"}               = \"Recherche réclamation\";
+    \$Lang->{\"Ticket Search.\"}              = \"Recherche réclamation\";
+    \$Lang->{\"Create%sa ticket\"}             = \"Créer%sune réclamation\";
+    \$Lang->{\"Create a ticket\"}              = \"Créer une réclamation\";
+    \$Lang->{\"Your last tickets\"}            = \"Vos dernières réclamations\";
+    \$Lang->{\"Welcome %s, to your OTOBO.\"}   = \"Bienvenue %s sur votre espace ${CLIENT_NAME}.\";
+    \$Lang->{\"This service portal is available to you all day every day.\"} = \"Votre portail de gestion des réclamations est accessible 24h/24 et 7j/7.\";
+    \$Lang->{\"Explore >\"}                    = \"Découvrir ${ORGANIZATION_NAME} >\";
+    \$Lang->{\"Message of the day\"}           = \"Message du jour\";
+    \$Lang->{\"Your external tools\"}          = \"Vos outils externes\";
+    \$Lang->{\"Overview\"}                     = \"Aperçu\";
+    \$Lang->{\"Network error\"}                = \"Erreur réseau. Veuillez réessayer.\";
+    \$Lang->{\"OTOBO 11.1 | Service Management\"} = \"${CLIENT_NAME} | Service Client\";
+    \$Lang->{\"Your Tickets. Your OTOBO.\"}   = \"Vos Réclamations. Votre Espace ${CLIENT_NAME}.\";
+    \$Lang->{\"OTOBO News\"}                   = \"Nouveautés ${CLIENT_NAME}\";
+    \$Lang->{\"News about OTOBO.\"}            = \"Nouveautés à propos de ${CLIENT_NAME}.\";
+    \$Lang->{\"Jump to OTOBO!\"}              = \"Accéder à ${CLIENT_NAME} !\";
 
     return 1;
 }
 
 1;
-EOF
+EOF_PERL
 chown otobo:otobo /opt/otobo/Kernel/Language/fr_Custom.pm
-' 2>/dev/null || true
+" 2>/dev/null || true
   log_ok "Fichier langue fr_Custom.pm généré"
 fi
 
@@ -380,13 +380,13 @@ my $SysConfigObject    = $Kernel::OM->Get("Kernel::System::SysConfig");
 my $ValidID = $ValidObject->ValidLookup( Valid => "valid" );
 
 my %Queues = (
-    "Opérations & Moyens de Paiement" => "Traitement des réclamations sur cartes, virements, DAB et chèques.",
-    "Crédits & Financements"          => "Traitement des litiges sur prêts, agios et tableaux d\x27amortissement.",
-    "Monnaie Électronique & Mobile"   => "Réclamations relatives au Mobile Money et transferts digitaux.",
-    "Tarification & Frais Bancaires"  => "Contestations de frais de tenue de compte et commissions.",
-    "Fraude & Sécurité"               => "Gestion urgente des litiges de fraude et paiements non autorisés.",
-    "Service Client & Agences"        => "Réclamations sur la qualité de service et le traitement en agence.",
-    "Escalade & Conformité BCEAO"     => "Dossiers sensibles et recours avant saisine de la Commission Bancaire."
+    "Paiements"     => "Traitement des réclamations sur cartes, virements, DAB et chèques.",
+    "Crédits"        => "Traitement des litiges sur prêts, agios et tableaux d\x27amortissement.",
+    "Mobile Money"  => "Réclamations relatives au Mobile Money et transferts digitaux.",
+    "Frais & Tarif" => "Contestations de frais de tenue de compte et commissions.",
+    "Fraude"        => "Gestion urgente des litiges de fraude et paiements non autorisés.",
+    "Agences"       => "Réclamations sur la qualité de service et le traitement en agence.",
+    "Conformité"    => "Dossiers sensibles et recours avant saisine de la Commission Bancaire."
 );
 
 for my $QName ( keys %Queues ) {
@@ -406,12 +406,12 @@ for my $QName ( keys %Queues ) {
 }
 
 my @Types = (
-    "Réclamation Clientèle",
-    "Litige Monetique & Carte",
-    "Contestation de Frais",
-    "Incident Mobile Money",
-    "Suspicion de Fraude (Urgente)",
-    "Demande d\x27Information"
+    "Réclamation",
+    "Monétique",
+    "Frais",
+    "Mobile Money",
+    "Fraude",
+    "Information"
 );
 
 for my $TName (@Types) {
@@ -426,15 +426,15 @@ for my $TName (@Types) {
 }
 
 my %SLAs = (
-    "SLA BCEAO Standard (30 jours)" => {
+    "Standard (30j)" => {
         FirstResponseTime => 60,
         SolutionTime      => 43200,
-        Comment           => "SLA conforme Circulaire 002-2020/CB/C - Réponse sous 30 jours max",
+        Comment           => "SLA conforme Circulaire 002-2020/CB/C - Réponse sous 30j max",
     },
-    "SLA BCEAO Urgence / Fraude (5 jours)" => {
+    "Urgence (5j)" => {
         FirstResponseTime => 30,
         SolutionTime      => 7200,
-        Comment           => "SLA prioritaire pour suspicions de fraude et blocages de compte",
+        Comment           => "SLA prioritaire pour suspicions de fraude",
     }
 );
 
