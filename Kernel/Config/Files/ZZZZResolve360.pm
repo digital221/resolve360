@@ -1,6 +1,5 @@
 # --
-# Kernel/Config/Files/ZZZZResolve360.pm - Absolute Final Overrides for Resolve360 Banking
-# Loaded AFTER ZZZAAuto.pm (Alphabetical order ZZZZ > ZZZA)
+# Kernel/Config/Files/ZZZZResolve360.pm - Native OTOBO Banking Configuration (No Custom CSS)
 # --
 
 package Kernel::Config::Files::ZZZZResolve360;
@@ -21,10 +20,6 @@ sub Load {
     # Default Language
     $Self->{'DefaultLanguage'} = 'fr';
     $Self->{'CustomerDefaultLanguage'} = 'fr';
-
-    # Skins
-    push @{ $Self->{'Loader::Customer::CommonCSS'}->{'000-Framework'} }, 'resolve360.css';
-    push @{ $Self->{'Loader::Agent::CommonCSS'}->{'000-Framework'} }, 'resolve360.css';
 
     # ================================================================
     # HIDE IT SUPPORT FIELDS FROM CUSTOMER FORM (CustomerTicketMessage)
@@ -47,10 +42,6 @@ sub Load {
         'Resolve360_MaskedCard'    => 1,
         'Resolve360_TxnDate'       => 1,
         'Resolve360_MerchantName'  => 1,
-        'MotifReclamation'         => 1,
-        'MontantLitige'            => 1,
-        'CanalOrigine'             => 1,
-        'NumeroCompte'             => 1,
     };
 
     # FULL AGENT WORKSPACE FIELDS
